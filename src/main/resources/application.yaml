@@ -16,7 +16,8 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
   application:
     name: ORDER-SERVICE
-
+  config:
+    import: configserver:http://localhost:9296
 #eureka:
 #  client:
 #    fetch-registry: true
