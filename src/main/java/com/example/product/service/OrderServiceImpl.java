@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import com.example.product.entity.Order;
 import com.example.product.exception.CustomException;
@@ -13,6 +14,8 @@ import com.example.product.external.client.ProductService;
 import com.example.product.external.request.PaymentRequest;
 import com.example.product.model.OrderRequest;
 import com.example.product.model.OrderResponse;
+import com.example.product.model.OrderResponse.ProductDetails;
+import com.example.product.model.ProductResponse;
 import com.example.product.repository.OrderRepository;
 
 
@@ -32,6 +35,8 @@ public class OrderServiceImpl implements OrderService {
 	private ProductService productService;
 	
 	private final PaymentService paymentService;
+	private final RestTemplate restTemplate;
+	
 	
 	@Override
 	public long createOrder(OrderRequest orderRequest) {
@@ -74,11 +79,18 @@ public class OrderServiceImpl implements OrderService {
 	    Order order = orderRepository.findById(orderId)
 	            .orElseThrow(() -> new CustomException("Order not found with id " + orderId, "ORDER_NOT_FOUND", 404));
 
+	    log.info("Invoking product service to fetch the product for id : "+ order.getProductId());
+	    ProductResponse productResponse= restTemplate.getForObject("http://PRODUCT_SERVICE/product/getProductById"+order.getProductId(), ProductResponse.class);
+	    OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails.builder()
+	    		                                                                  .productName(productResponse.getProductName())
+	    		                                                                  .productId(productResponse.getProductId())
+	    		                                                                  .build();
 	    OrderResponse orderResponse = OrderResponse.builder()
 	                 .orderId(order.getId())
 	                 .orderStatus(order.getOrderStatus())
 	                 .amount(order.getAmount())
 	                 .orderDate(Instant.now())
+	                 .productDetails(productDetails)
 	                 .build();
 
 	    return orderResponse; 
