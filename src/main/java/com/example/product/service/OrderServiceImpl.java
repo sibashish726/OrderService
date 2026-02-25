@@ -101,7 +101,7 @@ public class OrderServiceImpl implements OrderService {
 
 	@Override
 	public List<OrderResponse> getAllOrders() {
-		log.info("Service: Fetching all orders from database");
+		log.info("Fetching all orders from database");
 	    List<Order> orders = orderRepository.findAll();
 
 	    List<OrderResponse> orderResponses = orders.stream()
