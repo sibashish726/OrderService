@@ -1,12 +1,15 @@
 package com.example.product.service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import com.example.product.entity.Order;
 import com.example.product.exception.CustomException;
 import com.example.product.external.client.PaymentService;
@@ -94,6 +97,23 @@ public class OrderServiceImpl implements OrderService {
 	                 .build();
 
 	    return orderResponse; 
+	}
+
+	@Override
+	public List<OrderResponse> getAllOrders() {
+		log.info("Service: Fetching all orders from database");
+	    List<Order> orders = orderRepository.findAll();
+
+	    List<OrderResponse> orderResponses = orders.stream()
+	            .map(order -> {
+	                OrderResponse orderResponse = new OrderResponse();
+	                BeanUtils.copyProperties(order, orderResponse);
+	                return orderResponse;
+	            })
+	            .collect(Collectors.toList());
+
+	    log.info("Service: Successfully fetched {} orders", orderResponses.size());
+	    return orderResponses;
 	}
 
 }

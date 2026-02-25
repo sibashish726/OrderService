@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.product.model.OrderRequest;
 import com.example.product.model.OrderResponse;
 import com.example.product.service.OrderService;
-
+import java.util.List;
 import lombok.extern.log4j.Log4j2;
 
 @RestController
@@ -32,9 +32,15 @@ public class OrderController {
 	   return new ResponseEntity<>(orderId,HttpStatus.OK);   
    }
    
-   @GetMapping("/{orderId}")
+   @GetMapping("/getOrderById/{orderId}")
    public ResponseEntity<OrderResponse> getOrderById(@PathVariable long orderId){
 	   OrderResponse orderResponse= orderService.getOrderById(orderId);
 	   return new ResponseEntity<>(orderResponse, HttpStatus.OK);       
+   }
+   
+   @GetMapping("/getAllOrders")
+   public ResponseEntity<List<OrderResponse>> getAllOrders() {
+       List<OrderResponse> orderResponses = orderService.getAllOrders();
+       return new ResponseEntity<>(orderResponses, HttpStatus.OK);
    }
 }
