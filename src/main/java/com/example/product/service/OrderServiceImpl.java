@@ -2,13 +2,12 @@ package com.example.product.service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import java.util.List;
 import java.util.stream.Collectors;
 import com.example.product.entity.Order;
 import com.example.product.exception.CustomException;
@@ -114,6 +113,38 @@ public class OrderServiceImpl implements OrderService {
 
 	    log.info("Service: Successfully fetched {} orders", orderResponses.size());
 	    return orderResponses;
+	}
+
+	@Override
+	public void updateOrder(long orderId, OrderRequest orderRequest) {
+		log.info("Updating order for Id: {}", orderId);
+	    
+	    Order order = orderRepository.findById(orderId)
+	            .orElseThrow(() -> new CustomException(
+	                    "Order not found with id " + orderId, "ORDER_NOT_FOUND", 404));
+
+	    order.setAmount(orderRequest.getTotalAmount());
+	    order.setQuantity(orderRequest.getQuantity());
+	    order.setOrderDate(Instant.now());
+
+	    orderRepository.save(order);
+	    log.info("Order updated successfully for Id: {}", orderId);
+		
+	}
+
+	@Override
+	public void deleteOrderById(long orderId) {
+		log.info("Deleting order for Id: {}", orderId);
+		try {
+			orderRepository.deleteById(orderId);
+	        log.info("Product deleted successfully with id: " + orderId);
+	    } catch (Exception e) {
+	        log.error("Error occurred while deleting order: " + e.getMessage());
+	        throw new CustomException(
+	                "order with id " + orderId + " not found",
+	                "ORDER_NOT_FOUND", 404
+	        );
+	    }
 	}
 
 }
