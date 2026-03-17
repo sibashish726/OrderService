@@ -5,5 +5,5 @@
 
 # High Level Design 
 
-![App Dashboard](./HLD.png)
+![App Dashboard](./HLD_new.png)
 
