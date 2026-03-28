@@ -157,8 +157,6 @@ Base path: `/order`
 
 ## Future Enhancements
 
-  - Integrate **Feign Clients** for synchronous communication with Product and Payment services.
   - Implement **Saga Pattern** for distributed transaction management.
-  - Add **Hystrix/Resilience4j** for fault tolerance.
   - Implement Order status workflow (CREATED -\> PAID -\> SHIPPED -\> DELIVERED).
 
