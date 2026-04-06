@@ -1,5 +1,6 @@
 package com.example.product.model;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 import lombok.AllArgsConstructor;
@@ -12,7 +13,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class OrderResponse {
+public class OrderResponse implements Serializable 
+{
+	private static final long serialVersionUID = 1L;
+	
    private long orderId;
    private Instant orderDate;
    private String orderStatus;

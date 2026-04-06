@@ -20,7 +20,9 @@ import com.example.product.model.OrderResponse.ProductDetails;
 import com.example.product.model.ProductResponse;
 import com.example.product.repository.OrderRepository;
 
-
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
@@ -76,13 +78,18 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	@Cacheable(value = "orders", key = "#orderId")
 	public OrderResponse getOrderById(long orderId) {
+		log.info("Cache miss: Fetching order details from DB for order id: {}", orderId);
 	    log.info("get order details for order id: " + orderId);
 	    Order order = orderRepository.findById(orderId)
 	            .orElseThrow(() -> new CustomException("Order not found with id " + orderId, "ORDER_NOT_FOUND", 404));
 
 	    log.info("Invoking product service to fetch the product for id : "+ order.getProductId());
-	    ProductResponse productResponse= restTemplate.getForObject("http://PRODUCT_SERVICE/product/getProductById"+order.getProductId(), ProductResponse.class);
+	    ProductResponse productResponse
+        = restTemplate.getForObject(
+                "http://PRODUCT-SERVICE/product/getProductById/" + order.getProductId(),
+        ProductResponse.class);
 	    OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails.builder()
 	    		                                                                  .productName(productResponse.getProductName())
 	    		                                                                  .productId(productResponse.getProductId())
@@ -99,7 +106,9 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	@Cacheable(value = "allOrders")
 	public List<OrderResponse> getAllOrders() {
+		log.info("Cache miss: Fetching all orders from database");
 		log.info("Fetching all orders from database");
 	    List<Order> orders = orderRepository.findAll();
 
@@ -116,7 +125,9 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	@CacheEvict(value = "orders", key = "#orderId")
 	public void updateOrder(long orderId, OrderRequest orderRequest) {
+		log.info("Updating order and evicting cache for Id: {}", orderId);
 		log.info("Updating order for Id: {}", orderId);
 	    
 	    Order order = orderRepository.findById(orderId)
@@ -133,7 +144,9 @@ public class OrderServiceImpl implements OrderService {
 	}
 
 	@Override
+	@CacheEvict(value = "orders", key = "#orderId")
 	public void deleteOrderById(long orderId) {
+		log.info("Deleting order and evicting cache for Id: {}", orderId);
 		log.info("Deleting order for Id: {}", orderId);
 		try {
 			orderRepository.deleteById(orderId);
