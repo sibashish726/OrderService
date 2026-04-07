@@ -5,7 +5,7 @@
 OrderService is the orchestrator of the ShoppingCart system. It manages the lifecycle of an order, including creation, status tracking, and history retrieval. It interacts with the ProductService for inventory management and the PaymentService for transaction processing.
 
 # High Level Design
-![App Dashboard](./HLD2.png)
+![App Dashboard](./HLD3.png)
 ## Tech Stack
 
   - **Framework:** Spring Boot 3.2.2
