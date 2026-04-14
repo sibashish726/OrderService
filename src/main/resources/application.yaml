@@ -17,13 +17,13 @@ spring:
   application:
     name: ORDER-SERVICE
   config:
-    import: configserver:http://localhost:9296
+    import: configserver:http://${CONFIG_SERVER_URL:localhost}:9296
   cache:
     type: redis
   data:
     redis:
-      host: localhost
-      port: 6379
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
 resilience4j:
   circuitbreaker:
     instances:
