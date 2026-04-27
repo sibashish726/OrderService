@@ -6,6 +6,7 @@ OrderService is the orchestrator of the ShoppingCart system. It manages the life
 
 # High Level Design
 ![App Dashboard](./HLD4.png)
+![App Dashboard](./spring_microservices_full_architecture.svg)
 ## Tech Stack
 
   - **Framework:** Spring Boot 3.2.2
